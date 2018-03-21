@@ -12,3 +12,9 @@ RUN wget --no-check-certificate https://download.docker.com/linux/static/stable/
 	&& mv /tmp/docker/docker /usr/bin \
 	&& rm -rf /tmp/docker-$VERSION /tmp/docker \
 	&& apt-get purge -y --auto-remove wget
+
+RUN apt-get update && apt-get install dnsutils -y
+
+COPY entrypoint.sh /tmp/entrypoint.sh
+RUN chmod u+x /tmp/entrypoint.sh
+ENTRYPOINT ["/tmp/entrypoint.sh"]

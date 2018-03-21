@@ -1,7 +1,7 @@
 FROM php:cli-stretch
 ENV GOSU_VERSION 1.7
 
-
+## Install dependencies
 RUN set -ex; \
 	\
 	deps=' \
@@ -14,6 +14,8 @@ RUN set -ex; \
 	apt-get update \
 	&& apt-get install -y --no-install-recommends $deps
 
+
+## Install gosu
 RUN curl -o /usr/local/bin/gosu -L "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
 	&& curl -o /usr/local/bin/gosu.asc -L "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
@@ -24,22 +26,26 @@ RUN curl -o /usr/local/bin/gosu -L "https://github.com/tianon/gosu/releases/down
 	&& gosu nobody true \
 	&& rm -rf /var/lib/apt/lists/*;
 
+## Install ee phar
 RUN curl -o /tmp/ee4 -L https://raw.githubusercontent.com/mbtamuli/ee4-builds/master/ee.phar; \
 	chmod +x /tmp/ee4; \
 	mv /tmp/ee4 /usr/local/bin/ee4;
 
-ENV VERSION "17.03.1-ce"
-RUN curl -o /tmp/docker-$VERSION.tgz -L https://download.docker.com/linux/static/stable/x86_64/docker-$VERSION.tgz \
-	&& tar -xz -C /tmp -f /tmp/docker-$VERSION.tgz \
-	&& mv /tmp/docker/docker /usr/bin \
-	&& rm -rf /tmp/docker-$VERSION /tmp/docker \
-	&& apt-get purge -y --auto-remove $deps
+## Install Docker-client
+# ENV VERSION "17.03.1-ce"
+# RUN curl -o /tmp/docker-$VERSION.tgz -L https://download.docker.com/linux/static/stable/x86_64/docker-$VERSION.tgz \
+# 	&& tar -xz -C /tmp -f /tmp/docker-$VERSION.tgz \
+# 	&& mv /tmp/docker/docker /usr/bin \
+# 	&& rm -rf /tmp/docker-$VERSION /tmp/docker \
+# 	&& apt-get purge -y --auto-remove $deps
 
+## Install Docker-compose
 ENV COMPOSE_VERSION 1.19.0
 RUN curl -o /usr/local/bin/docker-compose -L \
 	"https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-Linux-x86_64" \
 	&& chmod +x /usr/local/bin/docker-compose
 
+## Add user and group "ee"
 RUN groupadd -r -g 133 docker && groupadd -r -g 1000 ee && useradd -r -b /app -u 1000 -g ee ee && addgroup ee docker;\
 	mkdir /app/;
 
