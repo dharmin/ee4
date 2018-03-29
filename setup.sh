@@ -1,16 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 
+if ! which ee4 > /dev/null; then
+	# Checking docker
+	if ! which docker > /dev/null 2>&1; then
+		echo "Installing docker"
+		wget get.docker.com -O docker-setup.sh
+		if ! sh docker-setup.sh > /dev/null 2>&1; then
+			sudo usermod -aG docker $USER
+			echo "Please logout and login again to complete the docker setup setup"
+			rm docker-setup.sh
 
-mkdir ~/Sites ~/.ee4 > /dev/null 2>&1
-touch ~/.ee4/ee4_hosts > /dev/null 2>&1
-
-EE_HOME=$HOME
-
-mkdir $EE_HOME/.ee4 $EE_HOME/Sites > /dev/null 2>&1
-touch $EE_HOME/.ee4/ee4_hosts > /dev/null 2>&1
-
-USER_ID=`id -u`
-GROUP_ID=`id -g`
-DOCKER_ID=`getent group docker | cut -d: -f3`
-
-docker run --name dnsmasq -d -p 127.0.0.1:53:53/udp  -v $EE_HOME/.ee4/ee4_hosts:/etc/ee4_hosts --restart always dharmin/dnsmasq-ee > /dev/null 2>&1
+			# Installing ee4
+			wget https://raw.githubusercontent.com/dharmin/ee4/master/ee -O ee4
+			chmod +x ee4
+			mv ee4 /usr/local/bin/ee4
+		fi
+	fi
+fi
