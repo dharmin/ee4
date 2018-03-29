@@ -11,7 +11,7 @@ RUN set -ex; \
 	dirmngr \
 	'; \
 	apt-get update \
-	&& apt-get install -y --no-install-recommends $deps
+	&& apt-get install -y --no-install-recommends $deps sudo
 
 
 ## Install gosu
@@ -42,6 +42,8 @@ RUN curl -o /usr/local/bin/docker-compose -L \
 
 COPY ee4.phar /usr/local/bin/ee4
 RUN chmod +x /usr/local/bin/ee4
+
 COPY entrypoint.sh /app/entrypoint.sh
+
 VOLUME ["/app/ee/Sites", "/app/ee/.ee4"]
 ENTRYPOINT ["/app/entrypoint.sh"]
