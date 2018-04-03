@@ -17,7 +17,7 @@ if ! which ee4 > /dev/null; then
 				# Installing ee4
 				wget https://raw.githubusercontent.com/dharmin/ee4/master/ee -O ee4
 				chmod +x ee4
-				mv ee4 /usr/local/bin/ee4
+				sudo mv ee4 /usr/local/bin/ee4
 			fi
         fi
     fi
